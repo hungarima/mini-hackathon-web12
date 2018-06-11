@@ -8,15 +8,16 @@
       <th scope="col">{{player3.name}}</th>
        <th scope="col">{{player4.name}}</th>
     </tr>
-  </thead>
-  <tbody>
     <tr class="bg-danger">
       <th scope="row">Sum Of Score</th>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td id="sum-1" class="sum-row"></td>
+      <td id="sum-2" class="sum-row"></td>
+      <td id="sum-3" class="sum-row"></td>
+      <td id="sum-4" class="sum-row"></td>
     </tr>
+  </thead>
+  <tbody id="scoreBody">
+  
     
   </tbody>
 </table>
@@ -27,15 +28,23 @@
 
 <script>
   let i = 0;
-  $("#addRound").click(function(){
+$("#addRound").click(function(){
     i++;
     $(`<tr>
       <th scope="row">Round ${i}</th>
-      <td><input type="text"></td>
-      <td><input type="text"></td>
-      <td><input type="text"></td>
-      <td><input type="text"></td>
+      <td><input type="number" class="form-control "></td>
+      <td><input type="number" class="form-control "></td>
+      <td><input type="number" class="form-control "></td>
+      <td><input type="number" class="form-control "></td>
+
+     
     </tr>`)
-                    .appendTo("tbody");
+                    .appendTo("#scoreBody");
 });
+
+$("#scoreBody").on("keyup","td", function() {
+  console.log($(this).val())
+})
+
+
 </script>

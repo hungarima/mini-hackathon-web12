@@ -4,7 +4,7 @@ const GameModel = require('../models/game.model');
 let Router = express.Router();
 
 Router.post('/games', function(req, res) {
-    console.log("reqBody", req.body);
+    
     req.body = {
         player1: { name : req.body.player1 },
         player2: { name : req.body.player2 },
@@ -12,7 +12,7 @@ Router.post('/games', function(req, res) {
         player4: { name : req.body.player4 }
     }
     GameModel
-    .create(req.body    )
+    .create(req.body)
     .then(function (gameCreated) {
         res.send({success: 1, gameId: gameCreated._id});
     })
