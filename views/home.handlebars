@@ -1,48 +1,31 @@
-
-
-<form id="playerForm">
+<form id="create_game_form" class="text-center">
     <div class="form-group">
-        <input type="text" class="form-control" id="player1" required placeholder="Player 1..">
+        <input type="text" placeholder="Player 1..." name="first_player" class="form-control border border-danger" required>
     </div>
-
     <div class="form-group">
-        <input type="text" class="form-control" id="player2" required placeholder="Player 2..">
+        <input type="text" placeholder="Player 2..." name="second_player" class="form-control border border-danger" required>
     </div>
-
     <div class="form-group">
-        <input type="text" class="form-control" id="player3" required placeholder="Player 3..">
+        <input type="text" placeholder="Player 3..." name="third_player" class="form-control border border-danger" required>
     </div>
-
     <div class="form-group">
-        <input type="text" class="form-control" id="player4" required placeholder="Player 4..">
+        <input type="text" placeholder="Player 4..." name="fourth_player" class="form-control border border-danger" required>
     </div>
-
     <button type="submit" class="btn btn-danger">CREATE NEW GAME</button>
 </form>
 
-
 <script>
-    console.log($);
-    $("#playerForm").submit(function(e) {
+    $("#create_game_form").submit(function(e) {
         e.preventDefault();
+
         $.ajax({
-            url: '/api/games',
             type: "POST",
-            data: {
-                player1 : $("#player1").val(),
-                player2 : $("#player2").val(),
-                player3 : $("#player3").val(),
-                player4 : $("#player4").val()
-            },
-            success: function(res) {
-                console.log("Success");
-                window.location.href= `/games/${res.gameId}`;
-            },
-            error: function(res) {
-                console.log("Error", res);
-            }
+            url: "/api/game",
+            data: $("#create_game_form").serialize()
+        }).then(res => {
+            if(res.success && res.game) window.location.href = "/game/"+res.game;
+        }).catch(err => {
+            console.log(err)
         })
     })
-
-
 </script>

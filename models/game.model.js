@@ -1,17 +1,15 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-let playerSchema = new Schema({
-    name: {type: String, required: true},
-    score: [{type: Number}]
-})
-
-let GameSchema = new Schema ({
-    player1: playerSchema,
-    player2: playerSchema,
-    player3: playerSchema,
-    player4: playerSchema,
-
-})
+const GameSchema = new mongoose.Schema({
+    players : [{
+        type: String
+    }],
+    scores: [[
+        {
+            type: Number,
+            default: 0
+        }
+    ]]
+});
 
 module.exports = mongoose.model("Game", GameSchema);

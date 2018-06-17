@@ -1,60 +1,60 @@
 const express = require('express');
-const path = require('path');
-const handlebars = require('express-handlebars');
-const bodyParser = require("body-parser");
-const fs = require('fs');
+const bodyParser = require('body-parser');
+const hbs = require('express-handlebars');
 const mongoose = require('mongoose');
+const helpers = require('handlebars-helpers');
+const math = helpers.math();
 
 const GameModel = require('./models/game.model');
-
-mongoose.connect('mongodb://localhost/minihack', function (err) {
-    if (err) console.log(err);
-    else console.log("DB connect success!");
-});
-GameModel.find({}, function (err, questions) {
-    
-})
-
-const gamesRouter = require('./router/gamesRouter');
-const apiRouter = require('./router/apiRouter');
+const ApiRouter = require('./routers/apiRouter');
 
 let app = express();
 
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+mongoose.connect('mongodb://localhost/scorekeeper', (err) => {
+    if(err) console.error(err)
+    else console.log("Connect DB success!");
+});
 
-// declare a new engine named 'handlebars from  'handlebars({defaultLayout: 'main'})'
-app.engine("handlebars", handlebars({
-    defaultLayout: 'main'
-}));
-// Set view app's view engine is 'handlebars' already declared above
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.engine('handlebars', hbs({ defaultLayout: 'main', helpers: {
+    math,
+    checkSumScore: function(score) {
+        return score.reduce((a, b) => a + b, 0) != 0 ? "invalid" : '';
+    }
+}}));
 app.set('view engine', 'handlebars');
 
-
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.render('home');
-})
+});
 
-app.use('/games', gamesRouter);
+app.get('/game/:id', (req, res) => {
+    GameModel.findById(req.params.id)
+        .then(gameFound => {
+            let sumPlayerScore = [ 0, 0, 0, 0];
 
-app.use('/api', apiRouter);
+            gameFound.scores.forEach(scoreRow => {
+                sumPlayerScore[0] += scoreRow[0];
+                sumPlayerScore[1] += scoreRow[1];
+                sumPlayerScore[2] += scoreRow[2];
+                sumPlayerScore[3] += scoreRow[3];
+            })
 
+            res.render('game', {
+                game: gameFound,
+                sumPlayerScore,
+                sumPlayerScoreTotal: sumPlayerScore.reduce((a, b) => a + b, 0)
+            });
+        });
+});
 
+app.use('/api', ApiRouter);
 
+app.use(express.static('public'));
 
-
-
-// app.use(express.static('public'));
-
-// app.use(function (req, res, next) {
-
-//     res.send('Not Found');
-
-// });
-
-app.listen(8080, function (err) {
-    if (err) console.log(err);
-    else console.log("Server is up!");
-
+app.listen(6996, (err) => {
+    if(err) console.log(err)
+    else console.log("App is listening!");
 });
